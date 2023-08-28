@@ -2,9 +2,11 @@ package com.proje.salad_App.service;
 
 import com.proje.salad_App.entity.concretes.Ingredient;
 import com.proje.salad_App.entity.concretes.Salad;
+import com.proje.salad_App.entity.concretes.User;
 import com.proje.salad_App.exeption.IngredientNotFoundException;
 import com.proje.salad_App.exeption.SaladNotFoundException;
 import com.proje.salad_App.payload.request.SaladRequest;
+import com.proje.salad_App.payload.response.IngredientResponse;
 import com.proje.salad_App.payload.response.SaladResponse;
 import com.proje.salad_App.repository.IngredientRepository;
 import com.proje.salad_App.repository.SaladRepository;
@@ -21,23 +23,35 @@ import java.util.stream.Collectors;
 public class SaladService {
     private final SaladRepository saladRepository;
     private final IngredientRepository ingredientRepository;
-    public SaladResponse createSalad(SaladRequest request) {
-        validateIngredients(request.getIngredientIds());
+
+    public SaladResponse createSalad(SaladRequest request, User user) {
+        Salad salad = prepareSalad(request, user);
+        return saveSalad(salad);
+    }
+    public SaladResponse createCustomSalad(SaladRequest request, User user) {
+        Salad salad = prepareSalad(request, user);
+        return saveSalad(salad);
+    }
+
+    private Salad prepareSalad(SaladRequest request, User user) {
+        Set<Ingredient> ingredients = validateAndRetrieveIngredients(request.getIngredientIds());
 
         Salad salad = new Salad();
         salad.setName(request.getName());
+        salad.setIngredients(ingredients);
+        salad.setUser(user);
 
+        return salad;
+    }
+
+    private Set<Ingredient> validateAndRetrieveIngredients(Set<Long> ingredientIds) {
         Set<Ingredient> ingredients = new HashSet<>();
-        for (Long ingredientId : request.getIngredientIds()) {
+        for (Long ingredientId : ingredientIds) {
             Ingredient ingredient = ingredientRepository.findById(ingredientId)
                     .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + ingredientId));
             ingredients.add(ingredient);
         }
-        salad.setIngredients(ingredients);
-
-        Salad savedSalad = saladRepository.save(salad);
-
-        return mapSaladEntityToResponse(savedSalad);
+        return ingredients;
     }
 
     private SaladResponse mapSaladEntityToResponse(Salad savedSalad) {
@@ -46,15 +60,6 @@ public class SaladService {
         response.setName(savedSalad.getName());
         // Map other fields as needed
         return response;
-    }
-
-
-    private void validateIngredients(Set<Long> ingredientIds) {
-        for (Long ingredientId : ingredientIds) {
-            ingredientRepository.findById(ingredientId)
-                    .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + ingredientId));
-        }
-
     }
 
     public SaladResponse getSaladById(Long id) {
@@ -103,4 +108,24 @@ public class SaladService {
 
         saladRepository.deleteById(id);
     }
+
+    public SaladResponse saveSalad(Salad salad) {
+        Salad savedSalad = saladRepository.save(salad);
+        return mapSaladEntityToResponse(savedSalad);
+    }
+
+
+
+    public double calculateSaladPrice(SaladResponse saladResponse) {
+        // SaladResponse nesnesinden gerekli bilgileri kullanarak fiyat hesaplamasını yapın
+        double totalPrice = 0.0;
+
+        for (IngredientResponse ingredientResponse : saladResponse.getIngredients()) {
+            // Malzeme fiyatlarını hesaplayarak totalPrice'e ekleyin
+            totalPrice += ingredientResponse.getPrice();
+        }
+
+        return totalPrice;
+    }
+
 }

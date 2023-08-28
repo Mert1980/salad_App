@@ -23,5 +23,8 @@ public class User extends BaseUser {
 
     @OneToMany(mappedBy = "user")
     private Set<Order> orders;
-    //private UserRole
+
+    @ManyToOne
+    @JoinColumn(name = "user_role_id")
+    private UserRole userRole;
 }

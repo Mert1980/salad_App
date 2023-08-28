@@ -16,5 +16,5 @@ import javax.validation.constraints.Size;
 @SuperBuilder
 public class UserRequest extends BaseUserRequest {
 
-
+    private Long userId;
 }

@@ -1,20 +1,19 @@
 package com.proje.salad_App.service;
-
 import com.proje.salad_App.entity.concretes.Admin;
 import com.proje.salad_App.entity.enums.RoleType;
+import com.proje.salad_App.exeption.AdminNotFoundException;
 import com.proje.salad_App.exeption.ConflictException;
 import com.proje.salad_App.payload.request.AdminRequest;
 import com.proje.salad_App.payload.response.AdminResponse;
-import com.proje.salad_App.payload.response.ResponseMessage;
 import com.proje.salad_App.repository.AdminRepository;
 import com.proje.salad_App.utils.Messages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Objects;
 import java.util.Optional;
 
@@ -25,8 +24,8 @@ public class AdminService {
     private final UserRoleService userRoleService;
     private final PasswordEncoder passwordEncoder;
 
-    public Object save(AdminRequest request) {
-        checkDuplicate(request.getUsername(),  request.getPhoneNumber());
+    public AdminResponse save(AdminRequest request) {
+        checkDuplicate(request.getUsername(), request.getPhoneNumber());
 
         Admin admin = createAdminForSave(request);
         admin.setBuild_in(false);
@@ -40,11 +39,7 @@ public class AdminService {
 
         Admin savedAdmin = adminRepository.save(admin);
 
-        return ResponseMessage.<AdminResponse>builder()
-                .message("Admin saved")
-                .httpStatus(HttpStatus.CREATED)
-                .object(createResponse(savedAdmin))
-                .build();
+        return mapAdminEntityToResponse(savedAdmin);
     }
 
     public void checkDuplicate(String username,  String phone) {
@@ -67,15 +62,13 @@ public class AdminService {
                 .build();
     }
 
-    private AdminResponse createResponse(Admin admin) {
-        return AdminResponse.builder()
-                .userId(admin.getId())
-                .username(admin.getUsername())
-                .firstName(admin.getFirstName())
-                .lastName(admin.getLastName())
-                .phoneNumber(admin.getPhoneNumber())
-                .email(admin.getEmail())
-                .build();
+    private AdminResponse  mapAdminEntityToResponse(Admin admin) {
+        AdminResponse response=new AdminResponse();
+        response.setUsername(admin.getUsername());
+        response.setFirstName(admin.getFirstName());
+        response.setLastName(admin.getLastName());
+        response.setEmail(admin.getEmail());
+        return response;
     }
 
     public Page<Admin> getAllAdmin(Pageable pageable) {
@@ -97,4 +90,45 @@ public class AdminService {
     public long countAllAdmin() {
         return adminRepository.count();
     }
+
+    public AdminResponse updateAdmin(Long id, AdminRequest request) {
+        Optional<Admin> adminOptional = adminRepository.findById(id);
+        if (adminOptional.isPresent()) {
+            Admin admin = adminOptional.get();
+            if (admin.isBuild_in()) {
+                throw new ConflictException(Messages.NOT_PERMITTED_METHOD_MESSAGE);
+            }
+
+            checkDuplicateForUpdate(admin.getUsername(), admin.getPhoneNumber(), request.getUsername(), request.getPhoneNumber());
+
+            admin.setUsername(request.getUsername());
+            admin.setFirstName(request.getFirstName());
+            admin.setLastName(request.getLastName());
+            admin.setEmail(request.getEmail());
+
+            if (request.getPassword() != null) {
+                admin.setPassword(passwordEncoder.encode(request.getPassword()));
+            }
+
+            Admin updatedAdmin = adminRepository.save(admin);
+            return mapAdminEntityToResponse(updatedAdmin);
+        } else {
+            throw new AdminNotFoundException(Messages.NOT_FOUND_USER_MESSAGE);
+        }
+    }
+
+    private void checkDuplicateForUpdate(String currentUsername, String currentPhoneNumber, String newUsername, String newPhoneNumber) {
+        if (!currentUsername.equals(newUsername) && adminRepository.existsByUsername(newUsername)) {
+            throw new ConflictException(String.format(Messages.ALREADY_REGISTER_MESSAGE_USERNAME, newUsername));
+        }
+
+        if (!currentPhoneNumber.equals(newPhoneNumber) && adminRepository.existsByPhoneNumber(newPhoneNumber)) {
+            throw new ConflictException(String.format(Messages.ALREADY_REGISTER_MESSAGE_PHONE_NUMBER, newPhoneNumber));
+        }
+    }
+    public Pageable createPageable(int page, int size, String sort, String type) {
+        Sort.Direction direction = "desc".equalsIgnoreCase(type) ? Sort.Direction.DESC : Sort.Direction.ASC;
+        return PageRequest.of(page, size, Sort.by(direction, sort));
+    }
+
 }

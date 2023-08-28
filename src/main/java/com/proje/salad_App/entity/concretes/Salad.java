@@ -22,6 +22,11 @@ public class Salad {
     @Column(nullable = false)
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id") // İlgili sütun adını düzenleyin
+    private User user;
+
+
     @ManyToMany
     @JoinTable(
             name = "salad_ingredients",

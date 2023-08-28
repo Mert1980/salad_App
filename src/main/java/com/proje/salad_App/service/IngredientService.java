@@ -1,24 +1,20 @@
 package com.proje.salad_App.service;
-
 import com.proje.salad_App.entity.concretes.Ingredient;
 import com.proje.salad_App.exeption.IngredientNotFoundException;
 import com.proje.salad_App.payload.request.IngredientRequest;
 import com.proje.salad_App.payload.response.IngredientResponse;
 import com.proje.salad_App.repository.IngredientRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class IngredientService { private final IngredientRepository ingredientRepository;
-
-    @Autowired
-    public IngredientService(IngredientRepository ingredientRepository) {
-        this.ingredientRepository = ingredientRepository;
-    }
+@RequiredArgsConstructor
+public class IngredientService {
+    private final IngredientRepository ingredientRepository;
 
     public List<IngredientResponse> getAllIngredients() {
         List<Ingredient> ingredients = ingredientRepository.findAll();
@@ -39,6 +35,7 @@ public class IngredientService { private final IngredientRepository ingredientRe
         BeanUtils.copyProperties(ingredient, ingredientResponse);
         return ingredientResponse;
     }
+
     public IngredientResponse getIngredient(Long id) {
         // Get the Ingredient from the repository
         Ingredient ingredient = ingredientRepository.findById(id)
@@ -47,6 +44,7 @@ public class IngredientService { private final IngredientRepository ingredientRe
         // Map Ingredient entity to IngredientResponse
         return mapIngredientEntityToResponse(ingredient);
     }
+
     public IngredientResponse updateIngredient(Long id, IngredientRequest request) {
         // Get the Ingredient from the repository
         Ingredient ingredient = ingredientRepository.findById(id)
@@ -61,6 +59,7 @@ public class IngredientService { private final IngredientRepository ingredientRe
         // Map the updated Ingredient to IngredientResponse
         return mapIngredientEntityToResponse(updatedIngredient);
     }
+
     private void updateIngredientEntityFromRequest(Ingredient ingredient, IngredientRequest request) {
         if (request.getName() != null) {
             ingredient.setName(request.getName());
@@ -79,6 +78,7 @@ public class IngredientService { private final IngredientRepository ingredientRe
         // Delete the Ingredient
         ingredientRepository.delete(ingredient);
     }
+
     private Ingredient mapIngredientRequestToEntity(IngredientRequest request) {
         Ingredient ingredient = new Ingredient();
         ingredient.setName(request.getName());
@@ -95,6 +95,10 @@ public class IngredientService { private final IngredientRepository ingredientRe
         response.setIngredientType(ingredient.getIngredientType());
         // Set adet and unit based on entity, if applicable
         return response;
+    }
+    public Ingredient getIngredientById(Long ingredientId) {
+        return ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + ingredientId));
     }
 
 

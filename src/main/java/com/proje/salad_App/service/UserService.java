@@ -1,9 +1,9 @@
 package com.proje.salad_App.service;
 
-
 import com.proje.salad_App.entity.concretes.User;
 import com.proje.salad_App.entity.concretes.UserRole;
 import com.proje.salad_App.entity.enums.RoleType;
+import com.proje.salad_App.exeption.DuplicateUserException;
 import com.proje.salad_App.exeption.UserNotFoundException;
 import com.proje.salad_App.payload.request.UserRequest;
 import com.proje.salad_App.payload.response.UserResponse;
@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -23,25 +24,47 @@ public class UserService {
     private final UserRoleService userRoleService;
     private final PasswordEncoder passwordEncoder;
 
-
     public UserResponse createUser(UserRequest request) {
-        User newUser = new User();
-        newUser.setFirstName(request.getFirstName());
-        newUser.setLastName(request.getLastName());
-        newUser.setUsername(request.getUsername());
-        //newUser.setPassword(request.getPassword());
+        checkDuplicate(request.getUsername(), request.getPhoneNumber());
+
+        User newUser = createUserForSave(request);
+
+        // UserRole setlenmeli
+        newUser.setUserRole(userRoleService.getUserRole(RoleType.USER));
+
+        // Şifreyi şifrele
         String password = request.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         newUser.setPassword(encodedPassword);
-        newUser.setEmail(request.getEmail());
-        newUser.setPhoneNumber(request.getPhoneNumber());
-        //Role setlenmeli
-        UserRole userRole=userRoleService.getUserRole(RoleType.USER);
 
-
+        // Yeni kullanıcıyı kaydet
         User savedUser = userRepository.save(newUser);
 
+        // Yanıtı oluştur ve döndür
         return mapUserEntityToResponse(savedUser);
+    }
+
+    private User createUserForSave(UserRequest request) {
+        return User.builder()
+                .username(request.getUsername())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .phoneNumber(request.getPhoneNumber())
+                .build();
+    }
+
+    private void checkDuplicate(String username, String phoneNumber) {
+        boolean usernameExists = userRepository.existsByUsername(username);
+        boolean phoneNumberExists = userRepository.existsByPhoneNumber(phoneNumber);
+
+        if (usernameExists) {
+            throw new DuplicateUserException("Username already exists: " + username);
+        }
+
+        if (phoneNumberExists) {
+            throw new DuplicateUserException("Phone number already exists: " + phoneNumber);
+        }
     }
 
     public UserResponse getUserById(Long id) {
@@ -83,22 +106,19 @@ public class UserService {
         return mapUserEntityToResponse(updatedUser);
     }
 
-    private void updateUserEntityFromRequest(User user, UserRequest request) {
-        if (request.getUsername() != null && !request.getUsername().isEmpty()) {
-            user.setUsername(request.getUsername());
-        }
-        if (request.getPassword() != null && !request.getPassword().isEmpty()) {
-            user.setPassword(request.getPassword());
-        }
-        if (request.getFirstName() != null && !request.getFirstName().isEmpty()) {
-            user.setFirstName(request.getFirstName());
-        }
-        if (request.getLastName() != null && !request.getLastName().isEmpty()) {
-            user.setLastName(request.getLastName());
-        }
-        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
-            user.setEmail(request.getEmail());
+    private void updateIfNotNullOrEmpty(String newValue, Consumer<String> updateFunction) {
+        if (newValue != null && !newValue.isEmpty()) {
+            updateFunction.accept(newValue);
         }
     }
 
+    private void updateUserEntityFromRequest(User user, UserRequest request) {
+        updateIfNotNullOrEmpty(request.getUsername(), user::setUsername);
+        updateIfNotNullOrEmpty(request.getPassword(), user::setPassword);
+        updateIfNotNullOrEmpty(request.getFirstName(), user::setFirstName);
+        updateIfNotNullOrEmpty(request.getLastName(), user::setLastName);
+        updateIfNotNullOrEmpty(request.getEmail(), user::setEmail);
+    }
 }
+
+

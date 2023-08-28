@@ -70,5 +70,10 @@ public class StockService {
         response.setUnit(updatedStock.getUnit());
         return response;
     }
+
+    public StockResponse getStockResponseById(Long id) {
+        Stock stock = getStockById(id);
+        return mapStockEntityToResponse(stock);
+    }
 }
 
