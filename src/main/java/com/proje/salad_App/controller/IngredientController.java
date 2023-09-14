@@ -1,5 +1,6 @@
 package com.proje.salad_App.controller;
 
+import com.proje.salad_App.entity.enums.IngredientType;
 import com.proje.salad_App.payload.request.IngredientRequest;
 import com.proje.salad_App.payload.response.IngredientResponse;
 import com.proje.salad_App.service.IngredientService;
@@ -32,8 +33,14 @@ public class IngredientController {
         IngredientResponse response = ingredientService.getIngredient(id);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/byType/{type}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    public ResponseEntity<List<IngredientResponse>> getIngredientsByType(@PathVariable IngredientType type) {
+        List<IngredientResponse> ingredients = ingredientService.getIngredientsByType(type);
+        return ResponseEntity.ok(ingredients);
+    }
 
-    @PostMapping// http://localhost:8080/ingredients/id
+    @PostMapping
     @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<IngredientResponse> createIngredient(@RequestBody @Valid IngredientRequest ingredientRequest) {
         IngredientResponse ingredientResponse = ingredientService.createIngredient(ingredientRequest);

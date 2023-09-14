@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <link rel="icon" type="image/x-icon" href="images/QuerilessFavicon.png"/>
+    <link href="/resources/static/css/style.css" rel="stylesheet"/>
+    <title>Salad App</title>
+</head>
+<body>
+
+<div class="pill-nav">
+    <span sec:authorize="isAuthenticated()"> | Logged user: <span sec:authentication="name"></span>
+        | <a th:href="@{/logout}">Sign Out</a></span>
+
+    <a th:href="@{/profile}">User page</a>
+
+    <a th:href="@{/admin}">Administrator page </a>
+
+    <a th:href="@{/ingredients}">Ingredients menu </a>
+</div>
+
+
+<div id="main-container">
+    <div id="inside-logo">
+        <img src="images/QuerilessLogoDark.png" alt="Logo Queriless">
+    </div>
+    <h3>Add new user</h3>
+    <div th:if="${successMessage}" th:utext="${successMessage}"></div>
+    <form th:action="@{admin/save}" th:object="${admin}" method="POST" enctype="utf8">
+        <table>
+            <tr>
+                <td><label>firstname </label></td>
+                <td><label>
+                    <input th:field="*{firstName}"/>
+                </label>
+                    <p th:each="error: ${#fields.errors('firstName')}"
+                       th:text="${error}">Validation error</p></td>
+            </tr>
+            <tr>
+                <td><label>lastname</label></td>
+                <td><label>
+                    <input th:field="*{lastName}"/>
+                </label>
+                    <p th:each="error : ${#fields.errors('lastName')}"
+                       th:text="${error}">Validation error</p></td>
+            </tr>
+            <tr>
+                <td><label>email</label></td>
+                <td><label>
+                    <input type="email" th:field="*{email}"/>
+                </label>
+                    <p th:each="error : ${#fields.errors('email')}"
+                       th:text="${error}">Validation error</p></td>
+            </tr>          
+           
+            
+            <tr>
+                <td><label>username</label></td>
+                <td><label>
+                    <input th:field="*{username}"/>
+                </label>
+                    <p th:each="error : ${#fields.errors('username')}"
+                       th:text="${error}">Validation error</p></td>
+            </tr>
+            <tr>
+                <td><label>password</label></td>
+                <td><label>
+                    <input type="password" th:field="*{passCode}"/>
+                </label>
+                    <p th:each="error : ${#fields.errors('passCode')}"
+                       th:text="${error}">Validation error</p></td>
+            </tr>
+            <tr>
+                <td><button class="submit" type="submit">submit</button></td>
+                <td><a class="submit" th:href="@{/admin}">Admin</a></td>
+            </tr>
+        </table>
+    </form>
+
+</div>
+
+</body>
+</html>

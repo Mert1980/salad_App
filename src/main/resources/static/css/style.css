@@ -1,0 +1,216 @@
+
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: auto;
+}
+
+/*background gradient animation is made with the CSS Gradient Animator by Ian Forrest */
+body {
+    font-family: nunito, sans-serif;
+    background: linear-gradient(316deg, #24f316, #0d0d0d, #000000, #080606);
+    background-size: 800% 800%;
+
+    -webkit-animation: AnimationName 7.5s ease infinite;
+    animation: AnimationName 7.5s ease infinite;
+    color: white;
+}
+
+@-webkit-keyframes AnimationName {
+    0% {
+        background-position: 0 40%
+    }
+    50% {
+        background-position: 100% 40%
+    }
+    100% {
+        background-position: 0 40%
+    }
+}
+
+@keyframes AnimationName {
+    0% {
+        background-position: 0 40%
+    }
+    50% {
+        background-position: 100% 40%
+    }
+    100% {
+        background-position: 0 40%
+    }
+}
+/* end background */
+
+table {
+    margin-bottom: 20px;
+}
+
+h2 {
+    padding: 25px;
+    color: #24f316;
+}
+
+/* Buttons */
+
+button {
+    background-color: #0b6005;
+    display: inline-block;
+    color: #0d0d0d;
+    text-align: center;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 17px;
+    border-radius: 5px;
+    margin: 10px;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+button:hover {
+    background-color: #24f316;
+    color: #0d0d0d;
+}
+
+.pill-nav  a {
+    background-color: #0b6005;
+    display: inline-block;
+    color: #0d0d0d;
+    text-align: center;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 17px;
+    border-radius: 5px;
+    margin: 10px;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+.pill-nav a:hover {
+    background-color: #24f316;
+    color: #0d0d0d;
+}
+
+.submit {
+    font-family: nunito, sans-serif;
+    background-color: #0b6005;
+    display: inline-block;
+    color: #0d0d0d;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    font-size: 17px;
+    border-radius: 5px;
+    margin: 10px;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+.submit:hover {
+    background-color: #24f316;
+    color: #0d0d0d;
+}
+
+.pill-red-button a {
+    background-color: darkred;
+    display: inline-block;
+    color: #0d0d0ddd;
+    text-align: center;
+    padding: 10px;
+    text-decoration: none;
+    font-size: 17px;
+    border-radius: 5px;
+    margin: 10px;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+.pill-red-button a:hover {
+    background-color: red;
+    color: #0d0d0dab;
+}
+
+.pill-blue-button a {
+    background-color: darkblue;
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    font-size: 17px;
+    border-radius: 5px;
+    margin: 10px;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+.pill-blue-button a:hover {
+    background-color: blue;
+    color: white;
+}
+
+#login-submit {
+    font-family: nunito, sans-serif;
+    background-color: #0b6005;
+    display: inline-block;
+    color: #d89898a3;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    font-size: 17px;
+    border-radius: 5px;
+    margin: 10px;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+#login-submit:hover {
+    background-color: #24f316;
+    color: #e2a7a7f4;
+}
+
+/* end buttons */
+
+img {
+    width: 40%;
+    height: auto;
+}
+
+#main-container {
+    margin: 25px auto;
+    max-width: 75%;
+    text-align: center;
+    background-color: #3ba1c37d;
+    border: 2px solid darkslategray;
+    box-shadow: 0 0 15px darkslategray;
+}
+
+#inside-logo {
+    padding: 50px;
+}
+
+.container-form {
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 18px;
+    margin-top: 75px;
+}
+
+.form-group {
+    margin: 10px;
+}
+
+th {
+    text-align: center;
+    padding: 5px;
+}
+
+td {
+    border-bottom: 1px solid #63dfdf;
+    padding: 10px;
+}
+
+#error-message {
+    margin-bottom: 25px;
+}

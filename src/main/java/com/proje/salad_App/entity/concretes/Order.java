@@ -7,7 +7,9 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -31,7 +33,7 @@ public class Order {
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "salad_id")
     )
-    private Set<Salad> salads;
+    private List<Salad> salads;
 
     @Column(nullable = false)
     private LocalDateTime orderTime;
@@ -39,4 +41,7 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    @Column(nullable = false)
+    private double totalPrice;
 }

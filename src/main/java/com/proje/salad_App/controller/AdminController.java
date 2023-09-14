@@ -12,6 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -30,16 +31,16 @@ public class AdminController {
     //Not: getALL()  ****************************************************************
     @GetMapping("/getAll")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public ResponseEntity<Page<Admin>> getAll(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
-            @RequestParam(value = "sort", defaultValue = "name") String sort,
-            @RequestParam(value = "type", defaultValue = "desc") String type) {
-
-        Pageable pageable = adminService.createPageable(page, size, sort, type);
-        Page<Admin> admins = adminService.getAllAdmin(pageable);
-
+    public ResponseEntity<List<AdminResponse>> getAllAdmins() {
+        List<AdminResponse> admins = adminService.getAllAdmins();
         return ResponseEntity.ok(admins);
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<AdminResponse> getAdminById(@PathVariable Long id) {
+        AdminResponse admin = adminService.getAdminById(id);
+        return ResponseEntity.ok(admin);
     }
 
     // Not: update() ****************************************************************

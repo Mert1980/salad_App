@@ -1,18 +1,25 @@
 package com.proje.salad_App.service;
 
+import com.proje.salad_App.entity.concretes.Admin;
 import com.proje.salad_App.entity.concretes.Ingredient;
 import com.proje.salad_App.entity.concretes.Salad;
 import com.proje.salad_App.entity.concretes.User;
-import com.proje.salad_App.exeption.IngredientNotFoundException;
-import com.proje.salad_App.exeption.SaladNotFoundException;
+import com.proje.salad_App.exeption.*;
 import com.proje.salad_App.payload.request.SaladRequest;
+import com.proje.salad_App.payload.response.AdminResponse;
 import com.proje.salad_App.payload.response.IngredientResponse;
 import com.proje.salad_App.payload.response.SaladResponse;
+import com.proje.salad_App.payload.response.UserResponse;
+import com.proje.salad_App.repository.AdminRepository;
 import com.proje.salad_App.repository.IngredientRepository;
 import com.proje.salad_App.repository.SaladRepository;
+import com.proje.salad_App.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,29 +30,34 @@ import java.util.stream.Collectors;
 public class SaladService {
     private final SaladRepository saladRepository;
     private final IngredientRepository ingredientRepository;
+    private final UserRepository userRepository;
+    private final UserService userService;
+    private final AdminService adminService;
+    private final AdminRepository adminRepository;
 
-    public SaladResponse createSalad(SaladRequest request, User user) {
-        Salad salad = prepareSalad(request, user);
+
+
+
+    public SaladResponse createSalad(SaladRequest request) {
+        Salad salad = prepareSalad(request); // User ve Admin bağlantısını kaldırdık
         return saveSalad(salad);
     }
-    public SaladResponse createCustomSalad(SaladRequest request, User user) {
-        Salad salad = prepareSalad(request, user);
-        return saveSalad(salad);
-    }
 
-    private Salad prepareSalad(SaladRequest request, User user) {
-        Set<Ingredient> ingredients = validateAndRetrieveIngredients(request.getIngredientIds());
+
+    private Salad prepareSalad(SaladRequest request) {
+        List<Ingredient> ingredients = validateAndRetrieveIngredients(request.getIngredientIds());
 
         Salad salad = new Salad();
         salad.setName(request.getName());
         salad.setIngredients(ingredients);
-        salad.setUser(user);
+
+        salad.setPrice(this.calculateSaladPrice(salad));
 
         return salad;
     }
 
-    private Set<Ingredient> validateAndRetrieveIngredients(Set<Long> ingredientIds) {
-        Set<Ingredient> ingredients = new HashSet<>();
+    private List<Ingredient> validateAndRetrieveIngredients(List<Long> ingredientIds) {
+        List<Ingredient> ingredients = new ArrayList<>();
         for (Long ingredientId : ingredientIds) {
             Ingredient ingredient = ingredientRepository.findById(ingredientId)
                     .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + ingredientId));
@@ -58,24 +70,38 @@ public class SaladService {
         SaladResponse response = new SaladResponse();
         response.setId(savedSalad.getId());
         response.setName(savedSalad.getName());
-        // Map other fields as needed
+        response.setPrice(savedSalad.getPrice());
+
+        // Ingredients'ı dönüştürmeden doğrudan atama yap
+        response.setIngredients(savedSalad.getIngredients().stream()
+                .map(this::mapIngredientEntityToResponse)
+                .collect(Collectors.toSet()));
+
+        // Diğer alanları da gerektiği gibi doldurabilirsiniz
         return response;
     }
 
-    public SaladResponse getSaladById(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Salad id cannot be null");
-        }
 
+
+    private IngredientResponse mapIngredientEntityToResponse(Ingredient ingredient) {
+        IngredientResponse response = new IngredientResponse();
+        response.setId(ingredient.getId());
+        response.setName(ingredient.getName());
+        response.setPrice(ingredient.getPrice());
+        response.setIngredientType(ingredient.getIngredientType());
+        // Diğer alanları da gerektiği gibi doldurabilirsiniz
+        return response;
+    }
+
+
+    public SaladResponse getSaladById(Long id) {
         Salad salad = saladRepository.findById(id)
                 .orElseThrow(() -> new SaladNotFoundException("Salad not found with id: " + id));
-
         return mapSaladEntityToResponse(salad);
     }
 
     public List<SaladResponse> getAllSalads() {
         List<Salad> salads = saladRepository.findAll();
-
         return salads.stream()
                 .map(this::mapSaladEntityToResponse)
                 .collect(Collectors.toList());
@@ -86,17 +112,20 @@ public class SaladService {
                 .orElseThrow(() -> new SaladNotFoundException("Salad not found with id: " + id));
 
         salad.setName(request.getName());
-
-        // Clear previous ingredients
-        salad.getIngredients().clear();
-
-        // Add new ingredients based on ingredientIds from request
+        List<Ingredient> updatedIngredients = new ArrayList<>();
         for (Long ingredientId : request.getIngredientIds()) {
             Ingredient ingredient = ingredientRepository.findById(ingredientId)
                     .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + ingredientId));
-            salad.getIngredients().add(ingredient);
+            updatedIngredients.add(ingredient);
         }
+        salad.setIngredients(updatedIngredients);
+        salad.setPrice(calculateSaladPrice(salad));
 
+        Salad savedSalad = saladRepository.save(salad);
+        return mapSaladEntityToResponse(savedSalad);
+    }
+
+    public SaladResponse saveSalad(Salad salad) {
         Salad savedSalad = saladRepository.save(salad);
         return mapSaladEntityToResponse(savedSalad);
     }
@@ -109,23 +138,31 @@ public class SaladService {
         saladRepository.deleteById(id);
     }
 
-    public SaladResponse saveSalad(Salad salad) {
-        Salad savedSalad = saladRepository.save(salad);
-        return mapSaladEntityToResponse(savedSalad);
-    }
 
-
-
-    public double calculateSaladPrice(SaladResponse saladResponse) {
-        // SaladResponse nesnesinden gerekli bilgileri kullanarak fiyat hesaplamasını yapın
+    public double calculateSaladPrice(Salad salad) {
         double totalPrice = 0.0;
+        for (Ingredient ingredient : salad.getIngredients()) {
 
-        for (IngredientResponse ingredientResponse : saladResponse.getIngredients()) {
-            // Malzeme fiyatlarını hesaplayarak totalPrice'e ekleyin
-            totalPrice += ingredientResponse.getPrice();
+            double ingredientTotalPrice = ingredient.getPrice();
+            totalPrice += ingredientTotalPrice;
         }
-
         return totalPrice;
     }
 
+
+    public SaladResponse getSaladResponseById(Long id) {
+        Salad salad = saladRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Salad not found with id: " + id));
+
+        // Salad nesnesini kullanarak bir SaladResponse nesnesi oluşturabilirsiniz.
+        SaladResponse saladResponse = new SaladResponse();
+        saladResponse.setId(salad.getId());
+        saladResponse.setName(salad.getName());
+        saladResponse.setPrice(salad.getPrice());
+        // Diğer özellikleri de ekleyebilirsiniz.
+
+        return saladResponse;
+    }
 }
+
+

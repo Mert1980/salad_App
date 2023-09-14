@@ -19,4 +19,5 @@ public abstract class BaseUserResponse {
     private String email;
     private String phoneNumber;
 
+
 }

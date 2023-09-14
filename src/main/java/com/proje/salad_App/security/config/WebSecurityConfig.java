@@ -26,9 +26,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable().
+        http.csrf().disable()
+                .cors() // Enable CORS within Spring Security
+                .and().
                 authorizeHttpRequests().
-                antMatchers("/","index.html","/css/*","/js/*, /users/*").permitAll().
+                antMatchers("/","index.html","/css/*","/js/*").permitAll().
                 anyRequest().
                 authenticated().
                 and().

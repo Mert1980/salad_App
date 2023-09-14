@@ -119,6 +119,10 @@ public class UserService {
         updateIfNotNullOrEmpty(request.getLastName(), user::setLastName);
         updateIfNotNullOrEmpty(request.getEmail(), user::setEmail);
     }
+
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
 }
 
 

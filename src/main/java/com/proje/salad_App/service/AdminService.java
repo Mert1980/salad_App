@@ -14,8 +14,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,8 +74,11 @@ public class AdminService {
         return response;
     }
 
-    public Page<Admin> getAllAdmin(Pageable pageable) {
-        return adminRepository.findAll(pageable);
+    public List<AdminResponse> getAllAdmins() {
+        List<Admin> admins = adminRepository.findAll();
+        return admins.stream()
+                .map(this::mapAdminEntityToResponse)
+                .collect(Collectors.toList());
     }
 
     public String deleteAdmin(Long id) {
@@ -99,15 +105,20 @@ public class AdminService {
                 throw new ConflictException(Messages.NOT_PERMITTED_METHOD_MESSAGE);
             }
 
-            checkDuplicateForUpdate(admin.getUsername(), admin.getPhoneNumber(), request.getUsername(), request.getPhoneNumber());
+            String newUsername = request.getUsername();
+            String newPhoneNumber = request.getPhoneNumber();
+            if (!admin.getUsername().equals(newUsername) || !admin.getPhoneNumber().equals(newPhoneNumber)) {
+                checkDuplicateForUpdate(admin.getUsername(), admin.getPhoneNumber(), newUsername, newPhoneNumber);
+            }
 
-            admin.setUsername(request.getUsername());
+            admin.setUsername(newUsername);
             admin.setFirstName(request.getFirstName());
             admin.setLastName(request.getLastName());
             admin.setEmail(request.getEmail());
 
-            if (request.getPassword() != null) {
-                admin.setPassword(passwordEncoder.encode(request.getPassword()));
+            String newPassword = request.getPassword();
+            if (newPassword != null) {
+                admin.setPassword(passwordEncoder.encode(newPassword));
             }
 
             Admin updatedAdmin = adminRepository.save(admin);
@@ -131,4 +142,9 @@ public class AdminService {
         return PageRequest.of(page, size, Sort.by(direction, sort));
     }
 
+    public AdminResponse getAdminById(Long id) {
+        Admin admin = adminRepository.findById(id)
+                .orElseThrow(() -> new AdminNotFoundException(Messages.NOT_FOUND_USER_MESSAGE));
+        return mapAdminEntityToResponse(admin);
+    }
 }

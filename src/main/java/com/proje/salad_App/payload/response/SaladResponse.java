@@ -14,5 +14,6 @@ public class SaladResponse {
     private Long id;
     private String name;
     private Set<IngredientResponse> ingredients;
-    private User user;
+    private double price;
+
 }

@@ -26,6 +26,9 @@ public class Ingredient {
     @Column(nullable = false)
     private double price;
 
+    @Column(nullable = false)
+    private int quantityIngredient;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private IngredientType ingredientType;
@@ -35,6 +38,8 @@ public class Ingredient {
 
     @OneToMany(mappedBy = "ingredient")
     private Set<Stock> stocks;
+
+
 }
 
 

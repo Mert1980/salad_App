@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,16 +23,18 @@ public class Salad {
     @Column(nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id") // İlgili sütun adını düzenleyin
-    private User user;
-
 
     @ManyToMany
     @JoinTable(
             name = "salad_ingredients",
             joinColumns = @JoinColumn(name = "salad_id"),
             inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+        //    inverseJoinColumns = @JoinColumn(name = "quantity"),
     )
-    private Set<Ingredient> ingredients;
+    private List<Ingredient> ingredients;
+
+    @Column(nullable = false)
+    private double price; // Yeni alan: salad fiyatını tutmak için
+
+
 }

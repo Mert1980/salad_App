@@ -1,5 +1,6 @@
 package com.proje.salad_App.service;
 import com.proje.salad_App.entity.concretes.Ingredient;
+import com.proje.salad_App.entity.enums.IngredientType;
 import com.proje.salad_App.exeption.IngredientNotFoundException;
 import com.proje.salad_App.payload.request.IngredientRequest;
 import com.proje.salad_App.payload.response.IngredientResponse;
@@ -79,28 +80,23 @@ public class IngredientService {
         ingredientRepository.delete(ingredient);
     }
 
-    private Ingredient mapIngredientRequestToEntity(IngredientRequest request) {
-        Ingredient ingredient = new Ingredient();
-        ingredient.setName(request.getName());
-        ingredient.setPrice(request.getPrice());
-        ingredient.setIngredientType(request.getIngredientType());
-        // Set adet and unit based on request, if applicable
-        return ingredient;
-    }
+
 
     private IngredientResponse mapIngredientEntityToResponse(Ingredient ingredient) {
         IngredientResponse response = new IngredientResponse();
+
+        response.setId(ingredient.getId());
         response.setName(ingredient.getName());
         response.setPrice(ingredient.getPrice());
         response.setIngredientType(ingredient.getIngredientType());
-        // Set adet and unit based on entity, if applicable
         return response;
     }
-    public Ingredient getIngredientById(Long ingredientId) {
-        return ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IngredientNotFoundException("Ingredient not found with id: " + ingredientId));
+
+
+    public List<IngredientResponse> getIngredientsByType(IngredientType type) {
+        List<Ingredient> ingredients = ingredientRepository.findByIngredientType(type);
+        return ingredients.stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
-
-
-
 }

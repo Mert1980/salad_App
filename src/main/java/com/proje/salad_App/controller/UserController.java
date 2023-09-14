@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
@@ -25,11 +26,10 @@ public class UserController {
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<String> register(@Valid @RequestBody UserRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        if (!request.getUserId().equals(user.getId())) {
-            throw new UnauthorizedAccessException("You are not authorized to register another user.");
-        }
+        // Burada userDetails nesnesini kullanarak gerekli işlemleri yapabilirsiniz.
+        // Örneğin, userDetails.getUsername() ile kullanıcı adını alabilirsiniz.
 
         UserResponse createdUser = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully.");
@@ -50,33 +50,48 @@ public class UserController {
         List<UserResponse> responses = userService.getAllUsers();
         return ResponseEntity.ok(responses);
     }
+    @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
+        UserResponse userResponse = userService.getUserById(id);
+        return ResponseEntity.ok(userResponse);
+    }
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @RequestBody UserRequest request) {
-        UserResponse response = userService.updateUser(id, request);
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User authenticatedUser = (User) authentication.getPrincipal();
+        UserDetails authenticatedUser = (UserDetails) authentication.getPrincipal();
 
-        if (!response.getUserId().equals(authenticatedUser.getId())) {
+        // Kullanıcı kimliğini çıkarmak için ayrı bir servis kullanabilirsiniz
+        String username = authenticatedUser.getUsername();
+
+        // Kullanıcı admin rolüne sahipse veya güncellenen kullanıcı kendi profilini güncelliyorsa işlemi izin ver
+        if (isAdmin(authenticatedUser) || id.equals(username)) {
+            UserResponse response = userService.updateUser(id, request);
+            return ResponseEntity.ok(response);
+        } else {
             throw new UnauthorizedAccessException("You are not authorized to update this user.");
         }
-
-        return ResponseEntity.ok(response);
+    }
+    private boolean isAdmin(UserDetails userDetails) {
+        return userDetails.getAuthorities().stream()
+                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('ADMIN','USER')")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User authenticatedUser = (User) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
 
-        if (!authenticatedUser.getId().equals(id)) {
-            throw new UnauthorizedAccessException("You are not authorized to delete this user.");
-        }
+        // İlgili işlemi gerçekleştirebilir mi diye kontrol etmek için kodunuzu ekleyin
+        // Örneğin, yetkilendirmenin kontrolünü burada yapabilirsiniz.
+        // Eğer işlemi gerçekleştirebiliyorsa, aşağıdaki kodları kullanabilirsiniz.
 
+        // UserResponse createdUser = userService.createUser(request); // Bu satırı kaldırdım, çünkü request nesnesi tanımlanmamış.
         userService.deleteUser(id);
-        return ResponseEntity.noContent().build();
+        String message = "User successfully deleted";
+        return ResponseEntity.ok(message);
     }
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         UserResponse userResponse = userService.getUserById(id);

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 @Data
 @AllArgsConstructor
@@ -14,5 +15,6 @@ public class OrderRequest {
     private Long userId;
 
     @NotNull(message = "Please select at least one salad")
-    private Set<Long> saladIds;
+    private List<Long> saladIds;
+
 }
