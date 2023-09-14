@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salad App</title>
+    <title>Meat Ingredients List</title>
     <link rel="stylesheet" href="/resources/static/css/style-index.css">
 </head>
 <body>
@@ -13,23 +13,26 @@
                 <a href="#">LOGO</a>
             </div>
             <ul>
-                <li><a href="/resources/templates/index.html"class="active">HOME</a></li>
+                <li><a href="/resources/templates/index.html">HOME</a></li>
                 <li><a href="/resources/templates/about-us.html">About Us</a></li>
                 <li><a href="/resources/templates/contact.html">Contact</a></li>
-                <li><a href="/resources/templates/login.html">Login</a></li>
+                <li><a href="#">Login</a></li>
                 <li><a href="#">MENU</a></li>
             </ul>
         </div>
         <div class="center">
-           <h1>Welcome to </h1>
-           <h2>Salad App</h2> 
-           <div class="buttons">
-            <a href="/resources/templates/salad/salad-create.html">
-                <button>Create Your Salad!</button>
-            </a>
-           </div>
+            <h1>Sead Ingredients List</h1>
+
+            <ul id="ingredient-list">
+                <!-- Ingredients will be displayed here -->
+            </ul>
+
+            <button id="get-ingredients-button">Get Seed Ingredients</button>
+
+            <div id="ingredient-list-result"></div>
         </div>
     </div>
-    
+
+    <script src="/resources/static/js/seed-ingredient-list.js" type="application/javascript"></script>
 </body>
 </html>

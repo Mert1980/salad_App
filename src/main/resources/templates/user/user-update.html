@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/resources/static/css/style.css" rel="stylesheet"/>
+    <title>Update User</title>
+</head>
+<body>
+    <h1>Update User</h1>
+
+    <form id="user-update-form">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required><br>
+
+        <label for="username">New Username:</label>
+        <input type="text" id="username" name="username"><br>
+
+        <label for="firstName">New First Name:</label>
+        <input type="text" id="firstName" name="firstName"><br>
+
+        <label for="lastName">New Last Name:</label>
+        <input type="text" id="lastName" name="lastName"><br>
+
+        <label for="password">New Password:</label>
+        <input type="password" id="password" name="password"><br>
+
+        <label for="email">New Email:</label>
+        <input type="email" id="email" name="email"><br>
+
+        <label for="phoneNumber">New Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber"><br>
+
+        <!-- Update User butonunu ekledik -->
+        <button type="submit">Update User</button>
+    </form>
+
+    <div id="user-update-result"></div>
+
+    <script src="/resources/static/js/user-update.js" type="application/javascript"></script>
+</body>
+</html>

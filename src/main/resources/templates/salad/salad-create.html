@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/resources/static/css/style-index.css" rel="stylesheet"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Salad</title>
+</head>
+<body>
+    <div class="container">
+        <div class="navbar">
+            <div class="logo">
+                <a href="#">LOGO</a>
+            </div>
+            <ul>
+                <li><a href="/resources/templates/index.html"class="active">HOME</a></li>
+                <li><a href="/resources/templates/about-us.html">About Us</a></li>
+                <li><a href="/resources/templates/contact.html">Contact</a></li>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">MENU</a></li>
+            </ul>
+        </div>
+        <div class="center">
+           <h1>Customize </h1>
+           <h2>Your Salad</h2> 
+           <div>
+            <button class="ingredient-button" id="seed-button" value="SEED">Seed Ingredients</button>
+            <button class="ingredient-button" id="grain-button" value="GRAIN">Grain Ingredients</button>
+            <button class="ingredient-button" id="vegetable-button" value="VEGETABLE">Vegetable Ingredients</button>
+            <button class="ingredient-button" id="meat-button" value="MEAT">Meat Ingredients</button>
+            <button class="ingredient-button" id="sauce-button" value="SAUCE">Sauce Ingredients</button>
+        </div>
+        <ul id="ingredient-list"></ul>
+        <div id="ingredient-list-result"></div>
+       </div>
+       <div>
+         <table id="ingredient-table">
+           
+            <!-- button create salad -->
+            <!-- totaal bedrag -->
+         </table>
+    
+           
+        </div>
+        <div>
+            <form id="create-salad-form">
+                <input type="text" id="salad-name" name="salad-name" placeholder="Your Salad Name.." required><br><br>
+                <input type="text" id="ingredient-ids" name="ingredient-ids" placeholder="Your Salads Ingredients.." required><br><br>
+                <input type="submit" value="Create Salad">
+            </form>
+          
+          <div id="create-salad-result"></div>
+        </div>
+    
+        </div>
+    </div>
+    
+  //  <script src="/resources/static/js/create-salad-dropdown.js" type="application/javascript"></script>
+    <script src="/resources/static/js/create-salad.js" type="application/javascript"></script>>
+</body>
+</html>
+

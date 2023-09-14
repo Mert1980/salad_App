@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/resources/static/css/style.css" rel="stylesheet"/>
+    <title>Create Ingredient</title>
+</head>
+<body>
+    <h1>Create Ingredient</h1>
+
+    <form id="create-ingredient-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" step="0.01" required><br>
+
+        <label for="ingredientType">Ingredient Type:</label>
+        <select id="ingredientType" name="ingredientType" required>
+            <option value="GRAIN">Grain</option>
+            <option value="MEAT">Meat</option>
+            <option value="SAUCE">Sauce</option>
+            <option value="SEED">Seed</option>
+            <option value="VEGETABLE">Vegetable</option>
+        </select><br>
+
+        <!-- Create Ingredient butonunu ekledik -->
+        <button type="submit">Create Ingredient</button>
+    </form>
+
+    <div id="create-ingredient-result"></div>
+
+    <script src="/resources/static/js/ingredients-form.js" type="application/javascript"></script>
+</body>
+</html>
