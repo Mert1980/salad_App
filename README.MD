@@ -36,7 +36,7 @@ To run the project locally, follow these steps:
 
 1. Clone the project from your Git repository.
    ```bash
-   git clone https://github.com/your-git-repo/salad_App.git
+   git clone https://github.com/your-git-repo/salad_App.git```
 
 2. Navigate to the project's root directory and start the application with this command:
  ```bash
