@@ -1,48 +1,39 @@
-**Salad App**
-Salad App is a web application that allows users to create and order their customized salads. This application is a project that follows the trends of personalization and customization, especially in the world of food. Users can create their own salads, choose the ingredients, and place orders.
+# Salad App
 
-Technologies
-Technologies and libraries used in the project:
+Salad App is a web application that lets users create and order custom salads. This project aligns with the trend of personalization and customization in the food industry. Users can build their salads, select ingredients, and place orders.
 
-Java: The primary programming language used for application development.
-Spring Boot: A framework for rapid and easy development of Spring-based applications.
-Spring Data JPA: A Spring module for simplifying database operations.
-PostgreSQL: A relational database management system.
-Spring Security: Used for authentication and authorization.
-Thymeleaf: A server-side Java-based HTML template engine.
-Swagger: Used to generate and present API documentation.
-Lombok: A library used to reduce Java code repetition.
-JavaScript: Used for adding dynamic functionality on the front-end.
-HTML: Markup language for creating web pages.
-CSS: Used for styling and layout of web pages.
-Angular: Planned for an advanced front-end upgrade in the future.
-Project Description
-This project targets users who want to customize and personalize their salad orders. Users can perform the following core operations using the web application:
+## Technologies
 
-Create their own salads: Users can create their own salads by giving them names.
-Choose ingredients: Users can customize their salads by selecting ingredients from a list.
-Place orders: Users can place orders for the salads they've created.
-Browse existing salads: Users can review salads created by other users.
-The project plans to transition to a more powerful front-end technology like Angular in future developments to further enhance the user experience.
+The project uses the following technologies and libraries:
 
-Getting Started
-To run the project on your local machine, follow these steps:
+- **Java**: Primary programming language.
+- **Spring Boot**: Framework for rapid Spring-based application development.
+- **Spring Data JPA**: Simplifies database operations.
+- **PostgreSQL**: Relational database management system.
+- **Spring Security**: Used for authentication and authorization.
+- **Thymeleaf**: Server-side Java-based HTML template engine.
+- **Swagger**: Generates and presents API documentation.
+- **Lombok**: Reduces Java code repetition.
+- **JavaScript**: Adds dynamic functionality to the front-end.
+- **HTML**: Markup language for web pages.
+- **CSS**: Used for styling and layout.
+- **Angular**: Planned for future front-end enhancements.
 
-Clone the project files from this repository or your own Git repository.
-bash
-Copy code
-git clone https://github.com/your-git-repo/salad_App.git
-Navigate to the project's root directory and run the following command to start the application:
-arduino
-Copy code
-./mvnw spring-boot:run
-Open your web browser and go to http://localhost:8080 to view the application.
-Contributing
-This project is open-source, and contributions are welcome. To contribute, follow these steps:
+## Project Description
 
-Fork this repository to your GitHub account.
-Clone your forked repository to your local machine.
-Make your contributions and commit your changes.
-Push your changes to your forked repository on GitHub.
-Create a pull request to merge your changes into the original repository.
-Thank you for contributing to Salad App!
+Salad App caters to users who want customized salads. Core operations include:
+
+- Creating salads by giving them names.
+- Customizing salads by selecting ingredients from a list.
+- Placing orders for created salads.
+- Browsing existing salads made by other users.
+
+Future developments aim to transition to Angular for an improved user experience.
+
+## Getting Started
+
+To run the project locally, follow these steps:
+
+1. Clone the project from your Git repository.
+   ```bash
+   git clone https://github.com/your-git-repo/salad_App.git
