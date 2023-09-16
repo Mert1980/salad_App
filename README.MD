@@ -1,4 +1,4 @@
-Salad App
+#Salad App
 Salad App is a web application that allows users to create and order their customized salads. This application is a project that follows the trends of personalization and customization, especially in the world of food. Users can create their own salads, choose the ingredients, and place orders.
 
 Technologies
