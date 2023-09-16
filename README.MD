@@ -35,11 +35,9 @@ Future developments aim to transition to Angular for an improved user experience
 To run the project locally, follow these steps:
 
 1. Clone the project from your Git repository.
-   ```bash
-   git clone https://github.com/your-git-repo/salad_App.git
+   ```bash git clone https://github.com/your-git-repo/salad_App.git
 
 2. Navigate to the project's root directory and start the application with this command:
-   ```bash
-   ./mvnw spring-boot:run
+   ```bash ./mvnw spring-boot:run
 
 This command will launch the Salad App on your local machine. Once the application is running, you can access it by opening your web browser and visiting http://localhost:8080.
