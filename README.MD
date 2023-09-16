@@ -41,5 +41,6 @@ To run the project locally, follow these steps:
 2. Navigate to the project's root directory and start the application with this command:
  ```bash
    ./mvnw spring-boot:run
+```
 
 This command will launch the Salad App on your local machine. Once the application is running, you can access it by opening your web browser and visiting http://localhost:8080.
